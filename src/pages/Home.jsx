@@ -1,28 +1,19 @@
 import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
 import { useFetchAllRepoData } from "./../customHooks/useFetchData";
-
-// import { v4 as uuidv4 } from "uuid";
-
-// const key = uuidv4();
-
-// import { startTransition } from "react";
-
-function formatDate(timestamp) {
-  const date = new Date(timestamp);
-  const year = date.getFullYear();
-  const month = ("0" + (date.getMonth() + 1)).slice(-2); // Adding 1 because months are zero-indexed
-  const day = ("0" + date.getDate()).slice(-2);
-
-  return `${day}-${month}-${year}`;
-}
+import { Helmet } from "react-helmet-async";
+import RepoList from "../components/RepoList";
+import ReactPaginate from "react-paginate";
 
 const Home = () => {
   const { repositories, isError, isLoading } = useFetchAllRepoData();
-  const [searchTerm, setSearchTerm] = useState("");
+  //   const [searchedWord, setsearchedWord] = useState("");
   const [filteredRepositories, setFilteredRepositories] = useState([]);
+  const [currentPage, setCurrentPage] = useState(0);
 
-  // Save the data in state when it's loaded
+  // Number of repository per page
+  const PERPAGE = 10;
+
+  // Data is saved to state after loading
   useEffect(() => {
     if (repositories) {
       setFilteredRepositories(repositories);
@@ -31,61 +22,75 @@ const Home = () => {
 
   const searchRepo = (e) => {
     const typedWord = e.target.value.toLowerCase();
-    setSearchTerm(typedWord);
+    // setsearchedWord(typedWord);
+
     if (typedWord.trim() === "") {
+      //if there is no searched word i.e no word to filter, get all the repo
       setFilteredRepositories(repositories);
     } else {
-      setFilteredRepositories(
-        repositories.filter((repo) =>
-          repo.name.toLowerCase().includes(typedWord)
-        )
+      // get the repo that matches the searched word
+      const filtered = repositories.filter((repo) =>
+        repo.name.toLowerCase().includes(typedWord)
       );
+
+      // update the filtered repositories and reset to the first page to display
+      setFilteredRepositories(filtered);
+      setCurrentPage(0);
     }
   };
 
-  // if (repositories?.data) {
-  //   for (let index = 0; index < repositories.data.length; index++) {
-  //     //   console.log(repositories.data);
-  //     console.log(
-  //       repositories.data[index].created_at,
-  //       repositories.data[index].commits_url,
-  //       repositories.data[index].default_branch,
-  //       repositories.data[index].full_name,
-  //       repositories.data[index].language,
-  //       repositories.data[index].name,
-  //       repositories.data[index].owner,
-  //       repositories.data[index].private,
-  //       repositories.data[index].pushed_at,
-  //       repositories.data[index].updated_at,
-  //       repositories.data[index].url,
-  //       repositories.data[index].visibility,
-  //       `End of ${[index]}`
-  //     );
-  //   }
-  // }
-  //   created_at, commits_url, default_branch, full_name, language, name, owner, private, pushed_at, updated_at,url, visibility
+  const pageCount = Math.ceil(filteredRepositories.length / PERPAGE);
+  const offset = currentPage * PERPAGE;
+  const currentRepos = filteredRepositories.slice(offset, offset + PERPAGE);
+
+  // Pagination event handler
+  const handlePageChange = ({ selected }) => {
+    setCurrentPage(selected);
+  };
 
   return (
     <div>
+      {/* for seo */}
+      <Helmet>
+        <title>@victorvictoria-maker github repositories</title>
+        <meta
+          name='description'
+          content='This page shows all the repositories in my github account'
+        />
+      </Helmet>
+
+      {/* error fetching data */}
       {isError && <p>Error everywhere.</p>}
-      {isLoading && <p>Loadin...</p>}
+
+      {isLoading && <p>Loading...</p>}
+
+      {/* this should render when there is no error and it is done loading */}
       {!isLoading && !isError && (
         <>
           <div>
-            <input type='text' placeholder='search' onChange={searchRepo} />
+            <input type='text' placeholder='Search' onChange={searchRepo} />
           </div>
           <ol>
-            {filteredRepositories?.map((eachRepo) => {
-              return (
-                <li key={eachRepo.created_at}>
-                  <NavLink to={`/repositories/${eachRepo.name}`}>
-                    {eachRepo.name} || {eachRepo.language} ||{" "}
-                    {eachRepo.visibility} || {formatDate(eachRepo.created_at)}
-                  </NavLink>
-                </li>
-              );
-            })}
+            {currentRepos.map((eachRepo) => (
+              <RepoList key={eachRepo.created_at} eachRepo={eachRepo} />
+            ))}
           </ol>
+
+          {/* handle pagination */}
+          <ReactPaginate
+            nextLabel={<button>Next</button>}
+            onPageChange={handlePageChange}
+            pageRangeDisplayed={0}
+            marginPagesDisplayed={0}
+            pageCount={pageCount}
+            previousLabel={<button>Previous</button>}
+            previousClassName='page-item'
+            previousLinkClassName='page-link'
+            nextClassName='page-item'
+            nextLinkClassName='page-link'
+            containerClassName='pagination'
+            activeClassName='active'
+          />
         </>
       )}
     </div>

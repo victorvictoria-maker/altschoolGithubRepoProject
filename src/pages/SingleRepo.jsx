@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useFetchRepoData } from "../customHooks/useFetchData";
+import { Helmet } from "react-helmet-async";
 
 const SingleRepo = () => {
   const { id: repo } = useParams();
@@ -42,6 +43,14 @@ const SingleRepo = () => {
 
   return (
     <div>
+      <Helmet>
+        <title>{`@victorvictoria-maker/${repo}`}</title>
+        <meta
+          name='description'
+          content={`Details of my ${repo} repositories in my github account`}
+        />
+      </Helmet>
+
       <p>SingleRepo</p>
       <p>{repo}</p>
       {/* Render repository details, languages, commits, branches here */}

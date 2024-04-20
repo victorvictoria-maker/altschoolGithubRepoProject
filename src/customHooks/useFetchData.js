@@ -36,6 +36,9 @@ export function useFetchAllRepoData() {
         }
       },
     }
+    // {
+    //   refetchOnWindowFocus: false,
+    // }
 
     // {
     //   enabled: false,
