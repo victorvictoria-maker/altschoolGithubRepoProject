@@ -3,6 +3,9 @@ import { useFetchAllRepoData } from "./../customHooks/useFetchData";
 import { Helmet } from "react-helmet-async";
 import RepoList from "../components/RepoList";
 import ReactPaginate from "react-paginate";
+import { SimpleGrid, Button } from "@chakra-ui/react";
+// import Navbar from "../components/Navbar";
+import Loading from "../components/Loading";
 
 const Home = () => {
   const { repositories, isError, isLoading } = useFetchAllRepoData();
@@ -11,7 +14,7 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(0);
 
   // Number of repository per page
-  const PERPAGE = 10;
+  const PERPAGE = 6;
 
   // Data is saved to state after loading
   useEffect(() => {
@@ -62,19 +65,36 @@ const Home = () => {
       {/* error fetching data */}
       {isError && <p>Error everywhere.</p>}
 
-      {isLoading && <p>Loading...</p>}
+      {isLoading && <Loading />}
 
       {/* this should render when there is no error and it is done loading */}
       {!isLoading && !isError && (
         <>
+          {/* <Navbar /> */}
           <div>
             <input type='text' placeholder='Search' onChange={searchRepo} />
           </div>
-          <ol>
+          <Button
+            colorScheme='green'
+            onClick={() => (window.location.href = "/about")}
+          >
+            404
+          </Button>
+
+          {/* the repositories */}
+          <SimpleGrid
+            as='main'
+            minChildWidth='300px'
+            px='20px'
+            py='40px'
+            gap='15px'
+          >
             {currentRepos.map((eachRepo) => (
               <RepoList key={eachRepo.created_at} eachRepo={eachRepo} />
             ))}
-          </ol>
+          </SimpleGrid>
+
+          {/* <button onClick={errorFunction}>Error Boundary</button> */}
 
           {/* handle pagination */}
           <ReactPaginate

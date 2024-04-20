@@ -1,5 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
+import PageNotFound from "./components/PageNotFound";
 
 let Home = lazy(() => import("./pages/Home"));
 let SingleRepo = lazy(() => import("./pages/SingleRepo"));
@@ -14,7 +15,7 @@ const AppRouter = () => {
         {/* Nested route for SingleRepo */}
         <Route path='/repositories/:id' element={<SingleRepo />} />
         {/* 404 route */}
-        <Route path='*' Component={() => <div>Error</div>} />
+        <Route path='*' Component={() => <PageNotFound />} />
       </Routes>
     </Suspense>
   );

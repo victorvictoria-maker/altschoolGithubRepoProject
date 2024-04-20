@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import { useFetchRepoData } from "../customHooks/useFetchData";
 import { Helmet } from "react-helmet-async";
+import Loading from "../components/Loading";
 
 const SingleRepo = () => {
   const { id: repo } = useParams();
@@ -16,7 +17,7 @@ const SingleRepo = () => {
   } = useFetchRepoData("victorvictoria-maker", repo);
 
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Loading />;
   }
 
   if (isError) {
