@@ -50,8 +50,6 @@ export function useFetchAllRepoData() {
   return { repositories, isError, isLoading };
 }
 
-// victorOvictoria1999;
-
 // function to create a new repo
 export function useCreateNewRepo() {
   const {
@@ -101,6 +99,35 @@ export function useCreateNewRepo() {
   // console.log(newlyCreatedRepo, isPending, isError, isSuccess);
   // console.log(newlyCreatedRepo);
   return { mutate, newlyCreatedRepo, isPending, isError, isSuccess };
+}
+
+// function to delet a repo
+export function useDeleteRepo() {
+  const { mutate: deleteMutate } = useMutation({
+    mutationFn: async (repoName) => {
+      try {
+        const result = await octokit.request(
+          `DELETE /repos/victorvictoria-maker/${repoName}`,
+          {
+            owner: "victorvictoria-maker",
+            repo: repoName,
+            headers: {
+              "X-GitHub-Api-Version": "2022-11-28",
+            },
+          }
+        );
+
+        return result.data;
+      } catch (error) {
+        throw new Error("Error deleting this repository");
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries("allRepos");
+    },
+  });
+
+  return { deleteMutate };
 }
 
 // function to get all the singleRepo Details includinglangauges, commits and branches.

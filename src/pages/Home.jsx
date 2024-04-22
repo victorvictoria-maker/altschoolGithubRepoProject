@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   useCreateNewRepo,
+  useDeleteRepo,
   useFetchAllRepoData,
 } from "./../customHooks/useFetchData";
 import { Helmet } from "react-helmet-async";
@@ -20,6 +21,7 @@ const Home = () => {
     isError: repoCreationError,
     isSuccess,
   } = useCreateNewRepo();
+  const { deleteMutate } = useDeleteRepo();
 
   //   const [searchedWord, setsearchedWord] = useState("");
   const [filteredRepositories, setFilteredRepositories] = useState([]);
@@ -104,6 +106,11 @@ const Home = () => {
     }
   };
 
+  // deletion of the newly created repos
+  const deleteRepository = (repoName) => {
+    deleteMutate(repoName);
+  };
+
   return (
     <div>
       {/* for seo */}
@@ -158,7 +165,11 @@ const Home = () => {
             gap='15px'
           >
             {currentRepos.map((eachRepo) => (
-              <RepoList key={eachRepo.created_at} eachRepo={eachRepo} />
+              <RepoList
+                key={eachRepo.created_at}
+                eachRepo={eachRepo}
+                deleteRepository={deleteRepository}
+              />
             ))}
           </SimpleGrid>
 

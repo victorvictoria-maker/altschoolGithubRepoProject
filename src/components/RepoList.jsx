@@ -40,40 +40,45 @@ const RepoList = (prop) => {
       borderTop='4px'
       borderColor='purple.600'
     >
-      <NavLink
-        to={`/repositories/${eachRepo.name}`}
-        style={{ textDecoration: "none" }}
-      >
-        <CardHeader>
-          <Heading
-            as='h3'
-            fontSize='xl'
-            fontWeight='bold'
-            color='indigo.500'
-            // lineHeight='0'
-          >
-            {capitalizeText(eachRepo.name)}
-          </Heading>
-        </CardHeader>
-        <CardBody paddingTop='0'>
-          <Text>
-            Main Language: {eachRepo.language ? eachRepo.language : "None"}
-          </Text>
-          <Text>Last Updated: {formatDate(eachRepo.updated_at)}</Text>
-          <Text>{capitalizeText(eachRepo.visibility)} repo</Text>
+      <CardHeader>
+        <Heading
+          as='h3'
+          fontSize='xl'
+          fontWeight='bold'
+          color='indigo.500'
+          // lineHeight='0'
+        >
+          {capitalizeText(eachRepo.name)}
+        </Heading>
+      </CardHeader>
+      <CardBody paddingTop='0'>
+        <Text>
+          Main Language: {eachRepo.language ? eachRepo.language : "None"}
+        </Text>
+        <Text>Last Updated: {formatDate(eachRepo.updated_at)}</Text>
+        <Text>{capitalizeText(eachRepo.visibility)} repo</Text>
+        <NavLink
+          to={`/repositories/${eachRepo.name}`}
+          style={{ textDecoration: "none" }}
+        >
           <Button colorScheme='green' marginTop='15px'>
             Know more details
           </Button>
-          {eachRepo.description === distinctingText ? (
-            <Box mt='10px'>
-              <Button colorScheme='yellow'>Update</Button>
-              <Button colorScheme='red'>Delete</Button>
-            </Box>
-          ) : (
-            ""
-          )}
-        </CardBody>
-      </NavLink>
+        </NavLink>
+        {eachRepo.description === distinctingText ? (
+          <Box mt='10px'>
+            <Button colorScheme='yellow'>Update</Button>
+            <Button
+              colorScheme='red'
+              onClick={() => prop.deleteRepository(eachRepo.name)}
+            >
+              Delete
+            </Button>
+          </Box>
+        ) : (
+          ""
+        )}
+      </CardBody>
     </Card>
   );
 };
