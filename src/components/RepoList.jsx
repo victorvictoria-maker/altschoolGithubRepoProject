@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
-
+import { MdDelete } from "react-icons/md";
+import { FaArrowRight } from "react-icons/fa";
 import {
   Card,
   CardHeader,
@@ -41,9 +42,9 @@ const RepoList = (prop) => {
       borderColor='purple.600'
     >
       <CardHeader>
+        {/* <h1>Come</h1> */}
         <Heading
-          as='h3'
-          fontSize='xl'
+          fontSize='2xl'
           fontWeight='bold'
           color='indigo.500'
           // lineHeight='0'
@@ -51,42 +52,36 @@ const RepoList = (prop) => {
           {capitalizeText(eachRepo.name)}
         </Heading>
       </CardHeader>
-      <CardBody paddingTop='0'>
+      <CardBody as='section' paddingTop='0'>
         <Text>
           Main Language: {eachRepo.language ? eachRepo.language : "None"}
         </Text>
         <Text>Last Updated: {formatDate(eachRepo.updated_at)}</Text>
         <Text>{capitalizeText(eachRepo.visibility)} repo</Text>
 
-        {/* know more detalils button */}
-        <NavLink
-          to={`/repositories/${eachRepo.name}`}
-          style={{ textDecoration: "none" }}
+        <Box
+          display='flex'
+          justifyContent='space-between'
+          alignItems='center'
+          marginTop='15px'
         >
-          <Button colorScheme='green' marginTop='15px'>
-            Know more details
-          </Button>
-        </NavLink>
-
-        {/* delete and update button */}
-        {eachRepo.description === distinctingText ? (
-          <Box mt='10px'>
-            <Button
-              colorScheme='yellow'
-              onClick={() => updateRepository(eachRepo.name)}
-            >
-              Update
+          {/* know more details button */}
+          <NavLink to={`/repositories/${eachRepo.name}`}>
+            <Button colorScheme='green'>
+              More details <FaArrowRight className='ml-2' />
             </Button>
+          </NavLink>
+
+          {/* delete button */}
+          {eachRepo.description === distinctingText && (
             <Button
               colorScheme='red'
               onClick={() => deleteRepository(eachRepo.name)}
             >
-              Delete
+              <MdDelete />
             </Button>
-          </Box>
-        ) : (
-          ""
-        )}
+          )}
+        </Box>
       </CardBody>
     </Card>
   );

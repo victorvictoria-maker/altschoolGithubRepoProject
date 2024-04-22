@@ -1,30 +1,28 @@
 import { useState, useEffect } from "react";
 import {
-  useCreateNewRepo,
   useDeleteRepo,
   useFetchAllRepoData,
 } from "./../customHooks/useFetchData";
 import { Helmet } from "react-helmet-async";
 import RepoList from "../components/RepoList";
-import ReactPaginate from "react-paginate";
-import { SimpleGrid, Button, Box } from "@chakra-ui/react";
+
+import { SimpleGrid, Button } from "@chakra-ui/react";
 // import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
 import ModalComponent from "../components/ModalComponent";
+
+import Paginate from "../components/Paginate";
+import Navbar from "../components/Navbar";
 
 const Home = () => {
   const { repositories, isError, isLoading } = useFetchAllRepoData();
 
   const { deleteMutate } = useDeleteRepo();
 
-  //   const [searchedWord, setsearchedWord] = useState("");
   const [filteredRepositories, setFilteredRepositories] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [showErrorBoundary, setShowErrorBoundary] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  // // data for creating new repo
-  // const [newRepo, setNewRepo] = useState({});
 
   // Number of repository per page
   const PERPAGE = 6;
@@ -39,7 +37,6 @@ const Home = () => {
 
   const searchRepo = (e) => {
     const typedWord = e.target.value.toLowerCase();
-    // setsearchedWord(typedWord);
 
     if (typedWord.trim() === "") {
       //if there is no searched word i.e no word to filter, get all the repo
@@ -99,42 +96,38 @@ const Home = () => {
       {/* this should render when there is no error and it is done loading */}
       {!isLoading && !isError && (
         <>
-          {/* <Navbar /> */}
-
-          {/* search  */}
-          <div>
-            <input type='text' placeholder='Search' onChange={searchRepo} />
-          </div>
+          <Navbar searchRepo={searchRepo} />
 
           {/* page not found */}
-          <Button
+          {/* <Button
             colorScheme='green'
             onClick={() => (window.location.href = "/about")}
           >
             404
-          </Button>
+          </Button> */}
 
           {/* error boundary */}
-          <Button colorScheme='red' onClick={changeErrorBoundary}>
+          {/* <Button colorScheme='red' onClick={changeErrorBoundary}>
             Toggle Error Boundary
           </Button>
           {showErrorBoundary && (
             <Button onClick={renderWrongComponent}>Error Boundary</Button>
-          )}
+          )} */}
 
           {/* modal comoponent */}
-          <ModalComponent
+          {/* <ModalComponent
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
             mode='create'
-          />
+          /> */}
 
           {/* the repositories */}
           <SimpleGrid
             as='main'
             minChildWidth='300px'
             px='20px'
-            py='40px'
+            paddingTop='40px'
+            paddingBottom='0'
             gap='15px'
           >
             {currentRepos.map((eachRepo) => (
@@ -147,26 +140,8 @@ const Home = () => {
             ))}
           </SimpleGrid>
 
-          {/* <button onClick={errorFunction}>Error Boundary</button> */}
-
           {/* handle pagination */}
-          <Box display='flex' justifyContent='center' marginTop='20px'>
-            <ReactPaginate
-              // eslint-disable-next-line react/no-unknown-property
-              nextLabel={<button> Next</button>}
-              onPageChange={handlePageChange}
-              pageRangeDisplayed={0}
-              marginPagesDisplayed={0}
-              pageCount={pageCount}
-              previousLabel={<button>Previous</button>}
-              previousClassName='page-item'
-              previousLinkClassName='page-link'
-              nextClassName='page-item'
-              nextLinkClassName='page-link'
-              containerClassName='pagination'
-              activeClassName='active'
-            />
-          </Box>
+          <Paginate handlePageChange={handlePageChange} pageCount={pageCount} />
         </>
       )}
     </div>

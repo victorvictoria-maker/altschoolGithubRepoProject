@@ -8,6 +8,8 @@ import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { ErrorBoundary } from "react-error-boundary";
 import { ChakraProvider } from "@chakra-ui/react";
 import ErrorBoundaryComponent from "./../src/components/ErrorBoundaryComponent";
+import "tailwindcss/tailwind.css";
+import "./index.css";
 
 // import './index.css'
 const queryClient = new QueryClient();
