@@ -36,7 +36,8 @@ export function useFetchAllRepoData() {
           throw new Error("Error fetching repositories");
         }
       },
-      refetchInterval: 3000,
+      staleTime: 1000,
+      refetchInterval: 1000,
     }
     // {
     //   refetchOnWindowFocus: false,
@@ -93,7 +94,7 @@ export function useCreateNewRepo() {
       //   (oldRepoList) => [...oldRepoList, newlyCreatedRepo],
       // ]);
 
-      queryClient.invalidateQueries("allRepos");
+      queryClient.invalidateQueries(["allRepos"]);
     },
   });
   // console.log(newlyCreatedRepo, isPending, isError, isSuccess);
@@ -101,7 +102,7 @@ export function useCreateNewRepo() {
   return { mutate, newlyCreatedRepo, isPending, isError, isSuccess };
 }
 
-// function to delet a repo
+// function to delete a repo
 export function useDeleteRepo() {
   const { mutate: deleteMutate } = useMutation({
     mutationFn: async (repoName) => {
@@ -123,7 +124,7 @@ export function useDeleteRepo() {
       }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries("allRepos");
+      queryClient.invalidateQueries(["allRepos"], { refetchActive: true });
     },
   });
 

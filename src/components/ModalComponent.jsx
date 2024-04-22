@@ -14,72 +14,71 @@ import {
   RadioGroup,
   Radio,
   HStack,
+  Text,
 } from "@chakra-ui/react";
-import { useRef } from "react";
-// import {
-//   useCreateNewRepo,
-//   useFetchAllRepoData,
-// } from "../customHooks/useFetchData";
+import { useState, useRef } from "react";
+import {
+  useCreateNewRepo,
+  useFetchAllRepoData,
+} from "../customHooks/useFetchData";
 
-const ModalComponent = ({ updateRepo }) => {
+const ModalComponent = () => {
+  const [newRepoName, setNewRepoName] = useState("");
+  const [newRepoType, setNewRepoType] = useState("public");
+  const [repoNameValidated, setRepoNameValidated] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  // const [firstName, setFirstName] = useState();
-  // const [lastName, setLastName] = useState();
-
   const initialRef = useRef(null);
   const publicRef = useRef();
   const privateRef = useRef();
-  // const finalRef = useRef(null);
+  const { repositories } = useFetchAllRepoData();
+  const {
+    mutate,
+    newlyCreatedRepo,
+    isPending,
+    isError: repoCreationError,
+    isSuccess,
+  } = useCreateNewRepo();
 
-  // const { repositories, isError, isLoading } = useFetchAllRepoData();
-  // const {
-  //   mutate,
-  //   newlyCreatedRepo,
-  //   isPending,
-  //   isError: creatingRepoError,
-  //   isSuccess,
-  // } = useCreateNewRepo();
+  // Function to check if repository already exists
+  const checkIfRepoExists = () => {
+    const newName = initialRef.current.value;
+    setNewRepoName(newName); // Update newRepoName state
+    const formattedRepoName = newName.replace(/\s+/g, "-");
 
-  // const updateRepo = () => {
-  //   // check if the repositories have loaded
-  //   if (isError || isLoading) {
-  //     return;
-  //   } else {
-  //     //       Your new repository will be created as hello-Madam.
-  //     // The repository name can only contain ASCII letters, digits, and the characters ., -, and _.
+    const repoExists = () => {
+      const lowercaseNewRepoName = formattedRepoName.toLowerCase();
+      return repositories.some(
+        (eachRepo) => eachRepo.name.toLowerCase() === lowercaseNewRepoName
+      );
+    };
 
-  //     let newRepoName = initialRef.current.value;
-  //     const visibility = publicRef.current.checked ? "public" : "private";
-  //     // visibility
-  //     console.log(visibility);
-  //     let formattedRepoName = newRepoName.replace(/\s+/g, "-");
-  //     console.log(formattedRepoName);
+    if (repoExists()) {
+      console.log(`Repository name - ${newName} - is not available`);
+      setRepoNameValidated(false);
+    } else {
+      setRepoNameValidated(true);
+    }
+  };
 
-  //     // check if repo name already exists
-  //     const repoExists = (formattedRepoName) => {
-  //       const lowercaseNewRepoName = formattedRepoName.toLowerCase();
-  //       return repositories.some(
-  //         (eachRepo) => eachRepo.name.toLowerCase() === lowercaseNewRepoName
-  //       );
-  //     };
+  // Function to create a new repository
+  const createNewRepo = () => {
+    if (repoNameValidated) {
+      console.log("You can mutate now");
+      console.log({ newRepoName, newRepoType });
+      mutate({ newRepoName, newRepoType });
+      if (isPending) {
+        console.log("Pending repo creation");
+      }
 
-  //     if (repoExists(newRepoName)) {
-  //       console.log("repository name  - fhfhf - is not available");
-  //       return;
-  //     } else {
-  //       console.log("goOn");
-  //       mutate({ newRepoName, visibility });
+      if (isSuccess) {
+        console.log("Suucessfully craeted new repo");
+      }
 
-  //       // Check if the mutation is successful and access the response data
-  //       // if(isSuccess) {
-  //       //   alert("Suucessful");
-  //       // }
-  //       // if (isSuccess && newlyCreatedRepo) {
-  //       //   alert("success");
-  //       //   onClose();
-  //       //   console.log("New repository created:", newlyCreatedRepo);
-  //       // }
-  //     }
+      onClose();
+    } else {
+      return;
+    }
+  };
 
   return (
     <>
@@ -87,12 +86,7 @@ const ModalComponent = ({ updateRepo }) => {
         ModalComponent
       </Button>
 
-      <Modal
-        initialFocusRef={initialRef}
-        // finalFocusRef={finalRef}
-        isOpen={isOpen}
-        onClose={onClose}
-      >
+      <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create your new repository</ModalHeader>
@@ -106,16 +100,28 @@ const ModalComponent = ({ updateRepo }) => {
           >
             <FormControl>
               <FormLabel>Repository name</FormLabel>
-              <Input ref={initialRef} placeholder='Repository name' />
+              <Input
+                ref={initialRef}
+                placeholder='Repository name'
+                onChange={checkIfRepoExists}
+              />
+              {newRepoName && (
+                <Text>
+                  {repoNameValidated ? (
+                    <span>You are good to go, {newRepoName} is available</span>
+                  ) : (
+                    <span>{newRepoName} is not available</span>
+                  )}
+                </Text>
+              )}
             </FormControl>
 
-            {/* <FormControl mt={4}>
-              <FormLabel>Last name</FormLabel>
-              <Input ref={finalRef} placeholder='Last name' />
-            </FormControl> */}
             <FormControl mt={4}>
               <FormLabel>Visibility</FormLabel>
-              <RadioGroup defaultValue='public'>
+              <RadioGroup
+                defaultValue='public'
+                onChange={(value) => setNewRepoType(value)}
+              >
                 <HStack spacing='24px'>
                   <Radio ref={publicRef} value='public'>
                     Public
@@ -128,11 +134,7 @@ const ModalComponent = ({ updateRepo }) => {
             </FormControl>
 
             <ModalFooter>
-              <Button
-                colorScheme='blue'
-                mr={3}
-                onClick={() => updateRepo(initialRef, publicRef)}
-              >
+              <Button colorScheme='blue' mr={3} onClick={createNewRepo}>
                 Save
               </Button>
               <Button onClick={onClose}>Cancel</Button>

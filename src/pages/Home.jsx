@@ -14,13 +14,7 @@ import ModalComponent from "../components/ModalComponent";
 
 const Home = () => {
   const { repositories, isError, isLoading } = useFetchAllRepoData();
-  const {
-    mutate,
-    newlyCreatedRepo,
-    isPending,
-    isError: repoCreationError,
-    isSuccess,
-  } = useCreateNewRepo();
+
   const { deleteMutate } = useDeleteRepo();
 
   //   const [searchedWord, setsearchedWord] = useState("");
@@ -28,14 +22,15 @@ const Home = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const [showErrorBoundary, setShowErrorBoundary] = useState(false);
 
-  // data for creating new repo
-  const [newRepo, setNewRepo] = useState({});
+  // // data for creating new repo
+  // const [newRepo, setNewRepo] = useState({});
 
   // Number of repository per page
   const PERPAGE = 6;
 
   // Data is saved to state after loading
   useEffect(() => {
+    console.log("Repository changed");
     if (repositories) {
       setFilteredRepositories(repositories);
     }
@@ -74,37 +69,37 @@ const Home = () => {
     setShowErrorBoundary(true);
   };
 
-  // handle creation of new repo
-  const updateRepo = (initialRef, publicRef) => {
-    const newRepoName = initialRef.current.value;
-    // format user input so whitespace can be replaced with hyphen just like github does it
-    const formattedRepoName = newRepoName.replace(/\s+/g, "-");
-    const repoType = publicRef.current.checked ? "public" : "private";
+  // // handle creation of new repo
+  // const createNewRepo = (initialRef, publicRef) => {
+  //   const newRepoName = initialRef.current.value;
+  //   // format user input so whitespace can be replaced with hyphen just like github does it
+  //   const formattedRepoName = newRepoName.replace(/\s+/g, "-");
+  //   const repoType = publicRef.current.checked ? "public" : "private";
 
-    // check if the repository already exists
-    const repoExists = () => {
-      const lowercaseNewRepoName = formattedRepoName.toLowerCase();
-      return repositories.some(
-        (eachRepo) => eachRepo.name.toLowerCase() === lowercaseNewRepoName
-      );
-    };
+  //   // check if the repository already exists
+  //   const repoExists = () => {
+  //     const lowercaseNewRepoName = formattedRepoName.toLowerCase();
+  //     return repositories.some(
+  //       (eachRepo) => eachRepo.name.toLowerCase() === lowercaseNewRepoName
+  //     );
+  //   };
 
-    if (repoExists()) {
-      console.log(`repository name  - ${newRepoName} - is not available`);
-      return;
-    } else {
-      console.log("goOn");
-      mutate({ newRepoName, repoType });
+  //   if (repoExists()) {
+  //     console.log(`repository name  - ${newRepoName} - is not available`);
+  //     return;
+  //   } else {
+  //     console.log("goOn");
+  //     mutate({ newRepoName, repoType });
 
-      if (isPending) {
-        console.log("Pending repo creation");
-      }
+  //     if (isPending) {
+  //       console.log("Pending repo creation");
+  //     }
 
-      if (isSuccess) {
-        console.log("Suucessfully craeted new repo");
-      }
-    }
-  };
+  //     if (isSuccess) {
+  //       console.log("Suucessfully craeted new repo");
+  //     }
+  //   }
+  // };
 
   // deletion of the newly created repos
   const deleteRepository = (repoName) => {
@@ -154,7 +149,7 @@ const Home = () => {
           )}
 
           {/* modal comoponent */}
-          <ModalComponent updateRepo={updateRepo} />
+          <ModalComponent />
 
           {/* the repositories */}
           <SimpleGrid
