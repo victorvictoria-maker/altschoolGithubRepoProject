@@ -13,6 +13,7 @@ import ModalComponent from "../components/ModalComponent";
 
 import Paginate from "../components/Paginate";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const Home = () => {
   const { repositories, isError, isLoading } = useFetchAllRepoData();
@@ -22,7 +23,6 @@ const Home = () => {
   const [filteredRepositories, setFilteredRepositories] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [showErrorBoundary, setShowErrorBoundary] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Number of repository per page
   const PERPAGE = 6;
@@ -97,30 +97,9 @@ const Home = () => {
       {!isLoading && !isError && (
         <>
           <Navbar searchRepo={searchRepo} />
-
-          {/* page not found */}
-          {/* <Button
-            colorScheme='green'
-            onClick={() => (window.location.href = "/about")}
-          >
-            404
-          </Button> */}
-
-          {/* error boundary */}
-          {/* <Button colorScheme='red' onClick={changeErrorBoundary}>
-            Toggle Error Boundary
-          </Button>
           {showErrorBoundary && (
             <Button onClick={renderWrongComponent}>Error Boundary</Button>
-          )} */}
-
-          {/* modal comoponent */}
-          {/* <ModalComponent
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            mode='create'
-          /> */}
-
+          )}
           {/* the repositories */}
           <SimpleGrid
             as='main'
@@ -139,9 +118,9 @@ const Home = () => {
               />
             ))}
           </SimpleGrid>
-
           {/* handle pagination */}
           <Paginate handlePageChange={handlePageChange} pageCount={pageCount} />
+          <Footer changeErrorBoundary={changeErrorBoundary} />
         </>
       )}
     </div>

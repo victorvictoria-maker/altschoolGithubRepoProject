@@ -76,23 +76,35 @@
 
 // export default Navbar;
 import { FaGithub } from "react-icons/fa";
+import ModalComponent from "./ModalComponent";
+import { useState } from "react";
 
 const Navbar = (prop) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
   return (
     <nav className='bg-gradient-to-r from-purple-800 via-green-800 to-red-800 p-4 flex flex-wrap items-center justify-between'>
-      <div className='flex items-center'>
+      <div className='flex items-center justify-center'>
         <FaGithub className='text-white mr-2' />
-        <h1 className='text-white text-lg font-bold mb-4 sm:mb-0'>
+        <h1 className='text-white text-lg font-bold sm:mb-1 mb:4 sm:mb-0 '>
           victorvictoria-maker
         </h1>
       </div>
 
-      <div className='flex items-center'>
+      <div className='flex items-center justify-between w-full sm:w-auto'>
+        {" "}
+        {/* Add w-full sm:w-auto */}
         <input
           type='text'
           placeholder='Search repo...'
-          className='px-4 py-2 bg-gray-100 text-black rounded-md focus:outline-none focus:bg-gray-100'
+          className='px-4 py-2 bg-gray-100 text-black rounded-md focus:outline-none focus:bg-gray-100  mr-4'
           onChange={prop.searchRepo}
+        />
+        {/* modal comoponent */}
+        <ModalComponent
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          mode='create'
         />
       </div>
     </nav>

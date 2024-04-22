@@ -83,7 +83,7 @@ const ModalComponent = () => {
   return (
     <>
       <Button colorScheme='green' onClick={onOpen}>
-        ModalComponent
+        New
       </Button>
 
       <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
