@@ -1,17 +1,33 @@
 import { useState, useEffect } from "react";
-import { useFetchAllRepoData } from "./../customHooks/useFetchData";
+import {
+  useCreateNewRepo,
+  useFetchAllRepoData,
+} from "./../customHooks/useFetchData";
 import { Helmet } from "react-helmet-async";
 import RepoList from "../components/RepoList";
 import ReactPaginate from "react-paginate";
-import { SimpleGrid, Button } from "@chakra-ui/react";
+import { SimpleGrid, Button, Box } from "@chakra-ui/react";
 // import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
+import ModalComponent from "../components/ModalComponent";
 
 const Home = () => {
   const { repositories, isError, isLoading } = useFetchAllRepoData();
+  const {
+    mutate,
+    newlyCreatedRepo,
+    isPending,
+    isError: repoCreationError,
+    isSuccess,
+  } = useCreateNewRepo();
+
   //   const [searchedWord, setsearchedWord] = useState("");
   const [filteredRepositories, setFilteredRepositories] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
+  const [showErrorBoundary, setShowErrorBoundary] = useState(false);
+
+  // data for creating new repo
+  const [newRepo, setNewRepo] = useState({});
 
   // Number of repository per page
   const PERPAGE = 6;
@@ -51,6 +67,43 @@ const Home = () => {
     setCurrentPage(selected);
   };
 
+  //   mimic error boundary
+  const changeErrorBoundary = () => {
+    setShowErrorBoundary(true);
+  };
+
+  // handle creation of new repo
+  const updateRepo = (initialRef, publicRef) => {
+    const newRepoName = initialRef.current.value;
+    // format user input so whitespace can be replaced with hyphen just like github does it
+    const formattedRepoName = newRepoName.replace(/\s+/g, "-");
+    const repoType = publicRef.current.checked ? "public" : "private";
+
+    // check if the repository already exists
+    const repoExists = () => {
+      const lowercaseNewRepoName = formattedRepoName.toLowerCase();
+      return repositories.some(
+        (eachRepo) => eachRepo.name.toLowerCase() === lowercaseNewRepoName
+      );
+    };
+
+    if (repoExists()) {
+      console.log(`repository name  - ${newRepoName} - is not available`);
+      return;
+    } else {
+      console.log("goOn");
+      mutate({ newRepoName, repoType });
+
+      if (isPending) {
+        console.log("Pending repo creation");
+      }
+
+      if (isSuccess) {
+        console.log("Suucessfully craeted new repo");
+      }
+    }
+  };
+
   return (
     <div>
       {/* for seo */}
@@ -71,15 +124,30 @@ const Home = () => {
       {!isLoading && !isError && (
         <>
           {/* <Navbar /> */}
+
+          {/* search  */}
           <div>
             <input type='text' placeholder='Search' onChange={searchRepo} />
           </div>
+
+          {/* page not found */}
           <Button
             colorScheme='green'
-            onClick={() => (window.location.href = "/about")}
+            onClick={() => (window.location.href = "/")}
           >
             404
           </Button>
+
+          {/* error boundary */}
+          <Button colorScheme='red' onClick={changeErrorBoundary}>
+            Toggle Error Boundary
+          </Button>
+          {showErrorBoundary && (
+            <Button onClick={renderWrongComponent}>Error Boundary</Button>
+          )}
+
+          {/* modal comoponent */}
+          <ModalComponent updateRepo={updateRepo} />
 
           {/* the repositories */}
           <SimpleGrid
@@ -97,20 +165,23 @@ const Home = () => {
           {/* <button onClick={errorFunction}>Error Boundary</button> */}
 
           {/* handle pagination */}
-          <ReactPaginate
-            nextLabel={<button>Next</button>}
-            onPageChange={handlePageChange}
-            pageRangeDisplayed={0}
-            marginPagesDisplayed={0}
-            pageCount={pageCount}
-            previousLabel={<button>Previous</button>}
-            previousClassName='page-item'
-            previousLinkClassName='page-link'
-            nextClassName='page-item'
-            nextLinkClassName='page-link'
-            containerClassName='pagination'
-            activeClassName='active'
-          />
+          <Box display='flex' justifyContent='center' marginTop='20px'>
+            <ReactPaginate
+              // eslint-disable-next-line react/no-unknown-property
+              nextLabel={<button> Next</button>}
+              onPageChange={handlePageChange}
+              pageRangeDisplayed={0}
+              marginPagesDisplayed={0}
+              pageCount={pageCount}
+              previousLabel={<button>Previous</button>}
+              previousClassName='page-item'
+              previousLinkClassName='page-link'
+              nextClassName='page-item'
+              nextLinkClassName='page-link'
+              containerClassName='pagination'
+              activeClassName='active'
+            />
+          </Box>
         </>
       )}
     </div>

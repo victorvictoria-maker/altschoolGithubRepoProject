@@ -1,27 +1,24 @@
-import { Box, Heading, Text, Button, Center, Image } from "@chakra-ui/react";
-import error404 from "../assets/error.png";
+import { Box, Heading, Button, Center, Image } from "@chakra-ui/react";
+import errorBoundary from "../assets/errorFlag.png";
 
 function ErrorNotFound() {
   return (
-    <Center height='100vh'>
+    <Center height='100vh' textAlign='center'>
       <Box textAlign='center'>
         <Image
-          src={error404}
-          alt='Page Found'
+          src={errorBoundary}
+          alt='errorBoundary'
           width='350px'
           paddingLeft='10px'
         />
         <Heading as='h1' size='xl' color='purple.600' mt={8} mb={4}>
-          Oops! Page Not Found
+          Error boundary!!!
         </Heading>
-        <Text color='indigo.500' fontSize='xl' mb={8}>
-          The page you are looking for does not exist.
-        </Text>
         <Button
           colorScheme='green'
           onClick={() => (window.location.href = "/")}
         >
-          Go Home
+          Reload Page
         </Button>
       </Box>
     </Center>

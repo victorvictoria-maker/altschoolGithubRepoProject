@@ -7,6 +7,7 @@ import {
   Heading,
   Text,
   Button,
+  Box,
 } from "@chakra-ui/react";
 
 function formatDate(timestamp) {
@@ -25,6 +26,9 @@ function capitalizeText(text) {
 
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+const distinctingText =
+  "This repo was not craeted from github directly, but from AltSchool github project!";
 
 const RepoList = (prop) => {
   let eachRepo = prop.eachRepo;
@@ -60,6 +64,14 @@ const RepoList = (prop) => {
           <Button colorScheme='green' marginTop='15px'>
             Know more details
           </Button>
+          {eachRepo.description === distinctingText ? (
+            <Box mt='10px'>
+              <Button colorScheme='yellow'>Update</Button>
+              <Button colorScheme='red'>Delete</Button>
+            </Box>
+          ) : (
+            ""
+          )}
         </CardBody>
       </NavLink>
     </Card>
