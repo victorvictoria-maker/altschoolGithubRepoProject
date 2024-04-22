@@ -166,16 +166,16 @@ export function useFetchRepoData(owner, repo) {
         );
 
         // commits in the repo
-        const commitsResult = await octokit.request(
-          "GET /repos/{owner}/{repo}/commits",
-          {
-            owner,
-            repo,
-            headers: {
-              "X-GitHub-Api-Version": "2022-11-28",
-            },
-          }
-        );
+        // const commitsResult = await octokit.request(
+        //   "GET /repos/{owner}/{repo}/commits",
+        //   {
+        //     owner,
+        //     repo,
+        //     headers: {
+        //       "X-GitHub-Api-Version": "2022-11-28",
+        //     },
+        //   }
+        // );
 
         // branches in the repo
         const branchesResult = await octokit.request(
@@ -192,7 +192,7 @@ export function useFetchRepoData(owner, repo) {
         return {
           repositoryData: singleRepoResult.data,
           repositoryLanguages: languagesResult.data,
-          repositoryCommits: commitsResult.data,
+          // repositoryCommits: commitsResult.data,
           repositoryBranches: branchesResult.data,
         };
       } catch (error) {
@@ -206,14 +206,14 @@ export function useFetchRepoData(owner, repo) {
   const {
     repositoryData,
     repositoryLanguages,
-    repositoryCommits,
+    // repositoryCommits,
     repositoryBranches,
   } = repoData || {};
 
   return {
     repositoryData,
     repositoryLanguages,
-    repositoryCommits,
+    // repositoryCommits,
     repositoryBranches,
     isLoading,
     isError,

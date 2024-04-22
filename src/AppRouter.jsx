@@ -1,6 +1,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route } from "react-router-dom";
-import PageNotFound from "./components/PageNotFound";
+import PageNotFound from "./pages/PageNotFound";
 
 let Home = lazy(() => import("./pages/Home"));
 let SingleRepo = lazy(() => import("./pages/SingleRepo"));

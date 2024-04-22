@@ -10,7 +10,7 @@ const SingleRepo = () => {
   const {
     repositoryData,
     repositoryLanguages,
-    repositoryCommits,
+    // repositoryCommits,
     repositoryBranches,
     isLoading,
     isError,
@@ -39,8 +39,8 @@ const SingleRepo = () => {
     repositoryData.updated_at
   );
   console.log(repositoryLanguages);
-  console.log(repositoryCommits[0].commit.message);
-  console.log(repositoryBranches[0].name);
+  // console.log(repositoryCommits[0].commit.message);
+  // console.log(repositoryBranches[0].name);
 
   return (
     <div>

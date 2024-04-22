@@ -21,6 +21,7 @@ const Home = () => {
   const [filteredRepositories, setFilteredRepositories] = useState([]);
   const [currentPage, setCurrentPage] = useState(0);
   const [showErrorBoundary, setShowErrorBoundary] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // // data for creating new repo
   // const [newRepo, setNewRepo] = useState({});
@@ -30,7 +31,7 @@ const Home = () => {
 
   // Data is saved to state after loading
   useEffect(() => {
-    console.log("Repository changed");
+    // console.log("Repository changed");
     if (repositories) {
       setFilteredRepositories(repositories);
     }
@@ -69,37 +70,10 @@ const Home = () => {
     setShowErrorBoundary(true);
   };
 
-  // // handle creation of new repo
-  // const createNewRepo = (initialRef, publicRef) => {
-  //   const newRepoName = initialRef.current.value;
-  //   // format user input so whitespace can be replaced with hyphen just like github does it
-  //   const formattedRepoName = newRepoName.replace(/\s+/g, "-");
-  //   const repoType = publicRef.current.checked ? "public" : "private";
-
-  //   // check if the repository already exists
-  //   const repoExists = () => {
-  //     const lowercaseNewRepoName = formattedRepoName.toLowerCase();
-  //     return repositories.some(
-  //       (eachRepo) => eachRepo.name.toLowerCase() === lowercaseNewRepoName
-  //     );
-  //   };
-
-  //   if (repoExists()) {
-  //     console.log(`repository name  - ${newRepoName} - is not available`);
-  //     return;
-  //   } else {
-  //     console.log("goOn");
-  //     mutate({ newRepoName, repoType });
-
-  //     if (isPending) {
-  //       console.log("Pending repo creation");
-  //     }
-
-  //     if (isSuccess) {
-  //       console.log("Suucessfully craeted new repo");
-  //     }
-  //   }
-  // };
+  // update the newly created repos
+  const updateRepository = (repoName) => {
+    console.log(repoName);
+  };
 
   // deletion of the newly created repos
   const deleteRepository = (repoName) => {
@@ -135,7 +109,7 @@ const Home = () => {
           {/* page not found */}
           <Button
             colorScheme='green'
-            onClick={() => (window.location.href = "/")}
+            onClick={() => (window.location.href = "/about")}
           >
             404
           </Button>
@@ -149,7 +123,11 @@ const Home = () => {
           )}
 
           {/* modal comoponent */}
-          <ModalComponent />
+          <ModalComponent
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            mode='create'
+          />
 
           {/* the repositories */}
           <SimpleGrid
@@ -164,6 +142,7 @@ const Home = () => {
                 key={eachRepo.created_at}
                 eachRepo={eachRepo}
                 deleteRepository={deleteRepository}
+                updateRepository={updateRepository}
               />
             ))}
           </SimpleGrid>

@@ -31,7 +31,7 @@ const distinctingText =
   "This repo was not craeted from github directly, but from AltSchool github project!";
 
 const RepoList = (prop) => {
-  let eachRepo = prop.eachRepo;
+  const { eachRepo, deleteRepository, updateRepository } = prop;
   //   console.log(eachRepo);
   return (
     <Card
@@ -57,6 +57,8 @@ const RepoList = (prop) => {
         </Text>
         <Text>Last Updated: {formatDate(eachRepo.updated_at)}</Text>
         <Text>{capitalizeText(eachRepo.visibility)} repo</Text>
+
+        {/* know more detalils button */}
         <NavLink
           to={`/repositories/${eachRepo.name}`}
           style={{ textDecoration: "none" }}
@@ -65,12 +67,19 @@ const RepoList = (prop) => {
             Know more details
           </Button>
         </NavLink>
+
+        {/* delete and update button */}
         {eachRepo.description === distinctingText ? (
           <Box mt='10px'>
-            <Button colorScheme='yellow'>Update</Button>
+            <Button
+              colorScheme='yellow'
+              onClick={() => updateRepository(eachRepo.name)}
+            >
+              Update
+            </Button>
             <Button
               colorScheme='red'
-              onClick={() => prop.deleteRepository(eachRepo.name)}
+              onClick={() => deleteRepository(eachRepo.name)}
             >
               Delete
             </Button>
