@@ -33,7 +33,6 @@ const ModalComponent = () => {
   const { repositories } = useFetchAllRepoData();
   const {
     mutate,
-    newlyCreatedRepo,
     isPending,
     isError: repoCreationError,
     isSuccess,
@@ -75,6 +74,10 @@ const ModalComponent = () => {
       }
 
       onClose();
+      setNewRepoName("");
+      alert(
+        "Oops, It might take a short while for the ui to update, still trying to ix the delay bug."
+      );
     } else {
       return;
     }
@@ -86,7 +89,14 @@ const ModalComponent = () => {
         New
       </Button>
 
-      <Modal initialFocusRef={initialRef} isOpen={isOpen} onClose={onClose}>
+      <Modal
+        initialFocusRef={initialRef}
+        isOpen={isOpen}
+        onClose={() => {
+          onClose();
+          setNewRepoName("");
+        }}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>Create your new repository</ModalHeader>
@@ -104,13 +114,20 @@ const ModalComponent = () => {
                 ref={initialRef}
                 placeholder='Repository name'
                 onChange={checkIfRepoExists}
+                required
+                aria-required='true'
               />
               {newRepoName && (
                 <Text>
                   {repoNameValidated ? (
-                    <span>You are good to go, {newRepoName} is available</span>
+                    <small className='text-green-600'>
+                      You are good to go, repository name {newRepoName} is
+                      available
+                    </small>
                   ) : (
-                    <span>{newRepoName} is not available</span>
+                    <small className='text-red-600 font-bold-600'>
+                      Repository name {newRepoName} is not available
+                    </small>
                   )}
                 </Text>
               )}
@@ -121,6 +138,9 @@ const ModalComponent = () => {
               <RadioGroup
                 defaultValue='public'
                 onChange={(value) => setNewRepoType(value)}
+                colorScheme='green'
+                required
+                aria-required='true'
               >
                 <HStack spacing='24px'>
                   <Radio ref={publicRef} value='public'>
@@ -134,10 +154,17 @@ const ModalComponent = () => {
             </FormControl>
 
             <ModalFooter>
-              <Button colorScheme='blue' mr={3} onClick={createNewRepo}>
+              <Button colorScheme='green' mr={3} onClick={createNewRepo}>
                 Save
               </Button>
-              <Button onClick={onClose}>Cancel</Button>
+              <Button
+                onClick={() => {
+                  onClose();
+                  setNewRepoName("");
+                }}
+              >
+                Cancel
+              </Button>
             </ModalFooter>
           </ModalBody>
         </ModalContent>

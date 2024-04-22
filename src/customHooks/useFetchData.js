@@ -97,9 +97,7 @@ export function useCreateNewRepo() {
       queryClient.invalidateQueries(["allRepos"]);
     },
   });
-  // console.log(newlyCreatedRepo, isPending, isError, isSuccess);
-  // console.log(newlyCreatedRepo);
-  return { mutate, newlyCreatedRepo, isPending, isError, isSuccess };
+  return { mutate, isPending, isError, isSuccess };
 }
 
 // function to delete a repo
@@ -137,6 +135,9 @@ export function useFetchRepoData(owner, repo) {
     data: repoData,
     isError,
     isLoading,
+    isFetching,
+    isPending,
+    isSuccess,
   } = useQuery({
     queryKey: ["singleRepo", owner, repo],
     queryFn: async () => {
@@ -166,20 +167,8 @@ export function useFetchRepoData(owner, repo) {
         );
 
         // commits in the repo
-        // const commitsResult = await octokit.request(
-        //   "GET /repos/{owner}/{repo}/commits",
-        //   {
-        //     owner,
-        //     repo,
-        //     headers: {
-        //       "X-GitHub-Api-Version": "2022-11-28",
-        //     },
-        //   }
-        // );
-
-        // branches in the repo
-        const branchesResult = await octokit.request(
-          "GET /repos/{owner}/{repo}/branches",
+        const commitsResult = await octokit.request(
+          "GET /repos/{owner}/{repo}/commits",
           {
             owner,
             repo,
@@ -188,12 +177,12 @@ export function useFetchRepoData(owner, repo) {
             },
           }
         );
+        // console.log(commitsResult.data);
 
         return {
           repositoryData: singleRepoResult.data,
           repositoryLanguages: languagesResult.data,
-          // repositoryCommits: commitsResult.data,
-          repositoryBranches: branchesResult.data,
+          repositoryCommits: commitsResult.data,
         };
       } catch (error) {
         throw new Error(
@@ -203,19 +192,17 @@ export function useFetchRepoData(owner, repo) {
     },
   });
 
-  const {
-    repositoryData,
-    repositoryLanguages,
-    // repositoryCommits,
-    repositoryBranches,
-  } = repoData || {};
+  const { repositoryData, repositoryLanguages, repositoryCommits } =
+    repoData || {};
 
   return {
     repositoryData,
     repositoryLanguages,
-    // repositoryCommits,
-    repositoryBranches,
-    isLoading,
+    repositoryCommits,
     isError,
+    isLoading,
+    isFetching,
+    isPending,
+    isSuccess,
   };
 }

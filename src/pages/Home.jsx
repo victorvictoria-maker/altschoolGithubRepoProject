@@ -9,11 +9,11 @@ import RepoList from "../components/RepoList";
 import { SimpleGrid, Button } from "@chakra-ui/react";
 // import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
-import ModalComponent from "../components/ModalComponent";
 
 import Paginate from "../components/Paginate";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import ResultNotFound from "../components/ResultNotFound";
 
 const Home = () => {
   const { repositories, isError, isLoading } = useFetchAllRepoData();
@@ -75,6 +75,9 @@ const Home = () => {
   // deletion of the newly created repos
   const deleteRepository = (repoName) => {
     deleteMutate(repoName);
+    alert(
+      "Oops, It might take a short while for the ui to update, still trying to ix the delay bug."
+    );
   };
 
   return (
@@ -101,25 +104,36 @@ const Home = () => {
             <Button onClick={renderWrongComponent}>Error Boundary</Button>
           )}
           {/* the repositories */}
-          <SimpleGrid
-            as='main'
-            minChildWidth='300px'
-            px='20px'
-            paddingTop='40px'
-            paddingBottom='0'
-            gap='15px'
-          >
-            {currentRepos.map((eachRepo) => (
-              <RepoList
-                key={eachRepo.created_at}
-                eachRepo={eachRepo}
-                deleteRepository={deleteRepository}
-                updateRepository={updateRepository}
+          {currentRepos.length > 0 ? (
+            <>
+              <SimpleGrid
+                as='main'
+                minChildWidth='300px'
+                px='20px'
+                paddingTop='40px'
+                paddingBottom='0'
+                gap='15px'
+              >
+                {currentRepos.map((eachRepo) => (
+                  <RepoList
+                    key={eachRepo.created_at}
+                    eachRepo={eachRepo}
+                    deleteRepository={deleteRepository}
+                    updateRepository={updateRepository}
+                  />
+                ))}
+              </SimpleGrid>
+
+              {/* handle pagination */}
+              <Paginate
+                handlePageChange={handlePageChange}
+                pageCount={pageCount}
               />
-            ))}
-          </SimpleGrid>
-          {/* handle pagination */}
-          <Paginate handlePageChange={handlePageChange} pageCount={pageCount} />
+            </>
+          ) : (
+            <ResultNotFound />
+          )}
+
           <Footer changeErrorBoundary={changeErrorBoundary} />
         </>
       )}

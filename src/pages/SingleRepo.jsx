@@ -1,22 +1,23 @@
-import { useParams } from "react-router-dom";
+import { FaGithub } from "react-icons/fa";
+import { Flex, Heading, Text, Tag, Link, Box } from "@chakra-ui/react";
 import { useFetchRepoData } from "../customHooks/useFetchData";
-import { Helmet } from "react-helmet-async";
 import Loading from "../components/Loading";
+import { useParams } from "react-router-dom";
+import { capitalizeText, formatDate } from "../utils/formatingFunctions";
 
-const SingleRepo = () => {
-  const { id: repo } = useParams();
-
-  // data from the fetchRepoData function in the hook
+const SingleRepoPage = () => {
+  const { id: repoName } = useParams();
   const {
     repositoryData,
     repositoryLanguages,
-    // repositoryCommits,
-    repositoryBranches,
+    repositoryCommits,
     isLoading,
+    isFetching,
+    isPending,
     isError,
-  } = useFetchRepoData("victorvictoria-maker", repo);
+  } = useFetchRepoData("victorvictoria-maker", repoName);
 
-  if (isLoading) {
+  if (isLoading || isFetching || isPending) {
     return <Loading />;
   }
 
@@ -24,44 +25,122 @@ const SingleRepo = () => {
     return <p>Error fetching data.</p>;
   }
 
-  console.log(
-    repositoryData,
-    repositoryData.commits_url,
-    repositoryData.created_at,
-    repositoryData.default_branch,
-    repositoryData.size,
-    // stars
-    repositoryData.stargazers_count,
-    repositoryData.subscribers_count,
-    repositoryData.forks_count,
-    // repositoryData.deployment_url,
-    repositoryData.visibility,
-    repositoryData.updated_at
-  );
-  console.log(repositoryLanguages);
-  // console.log(repositoryCommits[0].commit.message);
-  // console.log(repositoryBranches[0].name);
+  let languages;
+  if (repositoryLanguages) {
+    languages = Object.keys(repositoryLanguages);
+  } else {
+    languages = null;
+  }
+  const mainLanguage = repositoryData?.language;
+  const commitCount = repositoryCommits?.length;
+  const lastCommitMessage = repositoryCommits[0]?.commit?.message;
+  const lastCommitTime = repositoryCommits[0]?.commit?.author.date;
 
   return (
-    <div>
-      <Helmet>
-        <title>{`@victorvictoria-maker/${repo}`}</title>
-        <meta
-          name='description'
-          content={`Details of my ${repo} repositories in my github account`}
-        />
-      </Helmet>
+    <Flex
+      direction='column'
+      alignItems='center'
+      justifyContent='center'
+      minH='100vh'
+      px={4}
+      py={8}
+      bgGradient='linear(to-r, purple.800, green.400, red.500)'
+    >
+      <Box
+        maxW='xl'
+        bg='white'
+        boxShadow='lg'
+        rounded='lg'
+        p={{ base: 6, md: 8 }}
+        textAlign='left'
+      >
+        <Flex justify='space-between' align='center' mb={6}>
+          <Heading size='lg' fontWeight='bold'>
+            <FaGithub mr={2} />
+            {repoName}
+          </Heading>
+        </Flex>
+        <Flex flexWrap='wrap' mb={4}>
+          {languages.map((lang, index) => (
+            <Tag key={index} size='sm' mr={2} mb={2} bg='gray.200'>
+              {lang}
+            </Tag>
+          ))}
+        </Flex>
+        <Text fontSize='sm' color='gray.500'>
+          {capitalizeText(repositoryData.visibility)} repository
+        </Text>
+        <Text fontSize='sm' color='gray.500' mb={2}>
+          Main Language: {capitalizeText(mainLanguage)}
+        </Text>
+        <Text fontSize='sm' color='gray.500' mb={2}>
+          Default Branch: {capitalizeText(repositoryData.default_branch)}
+        </Text>
+        <Text fontSize='sm' color='gray.500' mb={2}>
+          Last Updated: {formatDate(repositoryData.updated_at)}
+        </Text>
+        <Text fontSize='sm' color='gray.500' mb={4}>
+          Created At: {formatDate(repositoryData.created_at)}
+        </Text>
+        <Text fontSize='sm' color='gray.500' mb={2}>
+          Last Commit Message: {lastCommitMessage}
+        </Text>
+        <Text fontSize='sm' color='gray.500' mb={6}>
+          Last Commited: {formatDate(lastCommitTime)}
+        </Text>
 
-      <p>SingleRepo</p>
-      <p>{repo}</p>
-      {/* Render repository details, languages, commits, branches here */}
-      <p>Stars</p>
-      <p>Watch</p>
-      <p>Fork</p>
-      <p>Branches</p>
-      <p>View on Github</p>
-    </div>
+        <Flex
+          flexWrap={{ base: "wrap", md: "nowrap" }}
+          justifyContent={{ md: "space-between" }}
+          mb={3}
+        >
+          <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }}>
+            No of Commits: {commitCount}
+          </Text>
+          <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }} mr={4}>
+            Size: {repositoryData.size} kb
+          </Text>
+          <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }} mr={4}>
+            Forks: {repositoryData.forks_count}
+          </Text>
+          <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }} mr={4}>
+            Subscribers: {repositoryData.subscribers_count}
+          </Text>
+          <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }} mr={4}>
+            Watchers: {repositoryData.watchers_count}
+          </Text>
+        </Flex>
+
+        <Flex justifyContent='space-between'>
+          <Link
+            href={repositoryData.html_url}
+            isExternal
+            bg='purple.800'
+            color='white'
+            px={4}
+            py={2}
+            rounded='md'
+            _hover={{ bg: "purple.900" }}
+            display='inline-block'
+          >
+            View on Github
+          </Link>
+          <Link
+            href='/'
+            bg='purple.800'
+            color='white'
+            px={4}
+            py={2}
+            rounded='md'
+            _hover={{ bg: "purple.900" }}
+            display='inline-block'
+          >
+            See other repositories
+          </Link>
+        </Flex>
+      </Box>
+    </Flex>
   );
 };
 
-export default SingleRepo;
+export default SingleRepoPage;
