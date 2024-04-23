@@ -12,6 +12,7 @@ const AppRouter = () => {
     <Suspense>
       <Routes>
         <Route path='/' element={<Home />} />
+        <Route path='/404' element={<PageNotFound />} />
         {/* Nested route for SingleRepo */}
         <Route path='/repositories/:id' element={<SingleRepo />} />
         {/* 404 route */}

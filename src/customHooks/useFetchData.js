@@ -93,8 +93,7 @@ export function useCreateNewRepo() {
       //   "allRepos",
       //   (oldRepoList) => [...oldRepoList, newlyCreatedRepo],
       // ]);
-
-      queryClient.invalidateQueries(["allRepos"]);
+      // queryClient.invalidateQueries(["allRepos"]);
     },
   });
   return { mutate, isPending, isError, isSuccess };

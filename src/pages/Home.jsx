@@ -29,10 +29,8 @@ const Home = () => {
 
   // Data is saved to state after loading
   useEffect(() => {
-    // console.log("Repository changed");
-    if (repositories) {
-      setFilteredRepositories(repositories);
-    }
+    // console.log("Hi");
+    setFilteredRepositories(repositories);
   }, [repositories]);
 
   const searchRepo = (e) => {
@@ -53,9 +51,9 @@ const Home = () => {
     }
   };
 
-  const pageCount = Math.ceil(filteredRepositories.length / PERPAGE);
+  const pageCount = Math.ceil(filteredRepositories?.length / PERPAGE);
   const offset = currentPage * PERPAGE;
-  const currentRepos = filteredRepositories.slice(offset, offset + PERPAGE);
+  const currentRepos = filteredRepositories?.slice(offset, offset + PERPAGE);
 
   // Pagination event handler
   const handlePageChange = ({ selected }) => {
@@ -104,7 +102,7 @@ const Home = () => {
             <Button onClick={renderWrongComponent}>Error Boundary</Button>
           )}
           {/* the repositories */}
-          {currentRepos.length > 0 ? (
+          {currentRepos?.length > 0 ? (
             <>
               <SimpleGrid
                 as='main'
