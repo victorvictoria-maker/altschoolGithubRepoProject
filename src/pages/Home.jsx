@@ -1,22 +1,20 @@
 import { useState, useEffect } from "react";
-import {
-  useDeleteRepo,
-  useFetchAllRepoData,
-} from "./../customHooks/useFetchData";
+import { useDeleteRepo } from "./../customHooks/useFetchData";
 import { Helmet } from "react-helmet-async";
 import RepoList from "../components/RepoList";
 
 import { SimpleGrid, Button } from "@chakra-ui/react";
-// import Navbar from "../components/Navbar";
 import Loading from "../components/Loading";
 
 import Paginate from "../components/Paginate";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import ResultNotFound from "../components/ResultNotFound";
+import { useGitHubRepo } from "../context/repoContext";
 
 const Home = () => {
-  const { repositories, isError, isLoading } = useFetchAllRepoData();
+  // trying context
+  const { allRepositories, isError, isLoading } = useGitHubRepo();
 
   const { deleteMutate } = useDeleteRepo();
 
@@ -30,18 +28,19 @@ const Home = () => {
   // Data is saved to state after loading
   useEffect(() => {
     // console.log("Hi");
-    setFilteredRepositories(repositories);
-  }, [repositories]);
+    setFilteredRepositories(allRepositories);
+    // console.log("gogo - home");
+  }, [allRepositories]);
 
   const searchRepo = (e) => {
     const typedWord = e.target.value.toLowerCase();
 
     if (typedWord.trim() === "") {
       //if there is no searched word i.e no word to filter, get all the repo
-      setFilteredRepositories(repositories);
+      setFilteredRepositories(allRepositories);
     } else {
       // get the repo that matches the searched word
-      const filtered = repositories.filter((repo) =>
+      const filtered = allRepositories.filter((repo) =>
         repo.name.toLowerCase().includes(typedWord)
       );
 
@@ -127,11 +126,12 @@ const Home = () => {
                 handlePageChange={handlePageChange}
                 pageCount={pageCount}
               />
+
+              {/* <p>{repoz}</p> */}
             </>
           ) : (
             <ResultNotFound />
           )}
-
           <Footer changeErrorBoundary={changeErrorBoundary} />
         </>
       )}

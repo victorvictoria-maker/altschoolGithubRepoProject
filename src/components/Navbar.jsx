@@ -1,12 +1,18 @@
 import { FaGithub } from "react-icons/fa";
 import ModalComponent from "./ModalComponent";
 import { useState } from "react";
+// import { useGitHubRepo } from "../context/repoContext";
 
 const Navbar = (prop) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // trying context
+  // const { repo: repoz } = useGitHubRepo();
+  // console.log(repoz);
+
   return (
     <nav className='bg-gradient-to-r from-purple-800 via-green-800 to-red-800 p-4 flex flex-wrap items-center justify-between'>
+      {/* <p>{repoz}</p> */}
       <div className='flex items-center justify-center'>
         <FaGithub className='text-white mr-2' />
         <h1 className='text-white text-lg font-bold sm:mb-1 mb:4  '>

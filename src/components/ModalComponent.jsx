@@ -17,10 +17,9 @@ import {
   Text,
 } from "@chakra-ui/react";
 import { useState, useRef } from "react";
-import {
-  useCreateNewRepo,
-  useFetchAllRepoData,
-} from "../customHooks/useFetchData";
+import { useCreateNewRepo } from "../customHooks/useFetchData";
+import { useGitHubRepo } from "../context/repoContext";
+import { useEffect } from "react";
 
 const ModalComponent = () => {
   const [newRepoName, setNewRepoName] = useState("");
@@ -30,13 +29,9 @@ const ModalComponent = () => {
   const initialRef = useRef(null);
   const publicRef = useRef();
   const privateRef = useRef();
-  const { repositories } = useFetchAllRepoData();
-  const {
-    mutate,
-    isPending,
-    isError: repoCreationError,
-    isSuccess,
-  } = useCreateNewRepo();
+  // const { repositories } = useFetchAllRepoData();
+  const { allRepositories, setAllRepositories } = useGitHubRepo();
+  const { mutate } = useCreateNewRepo();
 
   // Function to check if repository already exists
   const checkIfRepoExists = () => {
@@ -46,7 +41,7 @@ const ModalComponent = () => {
 
     const repoExists = () => {
       const lowercaseNewRepoName = formattedRepoName.toLowerCase();
-      return repositories.some(
+      return allRepositories.some(
         (eachRepo) => eachRepo.name.toLowerCase() === lowercaseNewRepoName
       );
     };
@@ -62,26 +57,29 @@ const ModalComponent = () => {
   // Function to create a new repository
   const createNewRepo = () => {
     if (repoNameValidated) {
-      console.log("You can mutate now");
-      console.log({ newRepoName, newRepoType });
-      mutate({ newRepoName, newRepoType });
-      if (isPending) {
-        console.log("Pending repo creation");
-      }
-
-      if (isSuccess) {
-        console.log("Suucessfully craeted new repo");
-      }
-
-      onClose();
-      setNewRepoName("");
-      alert(
-        "Oops, It might take a short while for the ui to update, still trying to ix the delay bug."
+      mutate(
+        { newRepoName, newRepoType },
+        {
+          onSuccess: (data) => {
+            setAllRepositories((prevRepos) => {
+              return [...prevRepos, data];
+            });
+            onClose();
+            setNewRepoName("");
+            alert(
+              "Oops, It might take a short while for the ui to update, still trying to ix the delay bug."
+            );
+          },
+        }
       );
     } else {
       return;
     }
   };
+
+  // useEffect(() => {
+  //   console.log(allRepositories);
+  // }, [allRepositories]);
 
   return (
     <>

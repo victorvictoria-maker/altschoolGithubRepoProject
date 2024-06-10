@@ -32,9 +32,17 @@ const SingleRepoPage = () => {
     languages = null;
   }
   const mainLanguage = repositoryData?.language;
-  const commitCount = repositoryCommits?.length;
-  const lastCommitMessage = repositoryCommits[0]?.commit?.message;
-  const lastCommitTime = repositoryCommits[0]?.commit?.author.date;
+
+  console.log(languages);
+
+  let commitCount = 0;
+  let lastCommitMessage = "Nil";
+  let lastCommitTime = "Nil";
+  if (repositoryCommits) {
+    commitCount = repositoryCommits?.length;
+    lastCommitMessage = repositoryCommits[0]?.commit?.message;
+    lastCommitTime = repositoryCommits[0]?.commit?.author.date;
+  }
 
   return (
     <Flex
@@ -60,13 +68,16 @@ const SingleRepoPage = () => {
             {repoName}
           </Heading>
         </Flex>
-        <Flex flexWrap='wrap' mb={4}>
-          {languages.map((lang, index) => (
-            <Tag key={index} size='sm' mr={2} mb={2} bg='gray.200'>
-              {lang}
-            </Tag>
-          ))}
-        </Flex>
+        {languages.length > 0 && (
+          <Flex flexWrap='wrap' mb={4}>
+            {languages.map((lang, index) => (
+              <Tag key={index} size='sm' mr={2} mb={2} bg='gray.200'>
+                {lang}
+              </Tag>
+            ))}
+          </Flex>
+        )}
+
         <Text fontSize='sm' color='gray.500'>
           {capitalizeText(repositoryData.visibility)} repository
         </Text>
@@ -86,7 +97,8 @@ const SingleRepoPage = () => {
           Last Commit Message: {lastCommitMessage}
         </Text>
         <Text fontSize='sm' color='gray.500' mb={6}>
-          Last Commited: {formatDate(lastCommitTime)}
+          Last Commited:
+          {repositoryCommits ? formatDate(lastCommitTime) : lastCommitTime}
         </Text>
 
         <Flex
@@ -94,7 +106,7 @@ const SingleRepoPage = () => {
           justifyContent={{ md: "space-between" }}
           mb={3}
         >
-          <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }}>
+          <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }} mr={4}>
             No of Commits: {commitCount}
           </Text>
           <Text fontSize='sm' color='gray.500' mb={{ base: 2, md: 0 }} mr={4}>
