@@ -89,7 +89,8 @@ const Home = () => {
       </Helmet>
 
       {/* error fetching data */}
-      {isError && <p>Error everywhere.</p>}
+      {/* {isError && <p>Error everywhere.</p>} */}
+      {isError && <p>Something is wrong somewhere.</p>}
 
       {isLoading && <Loading />}
 
